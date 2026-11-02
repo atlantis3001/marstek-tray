@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Marstek Tray
+Comment=Marstek Venus E battery status in the system tray
+Exec=python3 "@DIR@/marstek_tray.py"
+Icon=battery
+Categories=Utility;
+X-GNOME-Autostart-enabled=true

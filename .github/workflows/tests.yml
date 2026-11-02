@@ -1,0 +1,19 @@
+name: Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PyQt6
+        run: sudo apt-get update && sudo apt-get install -y python3-pyqt6
+      # The system Python, which sees the PyQt6 installed by apt.
+      - name: Run tests
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: /usr/bin/python3 -m unittest -v
