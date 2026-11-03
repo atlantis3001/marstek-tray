@@ -141,18 +141,18 @@ class ConfigDialog(QDialog):
         self.search_button.setEnabled(not self.probe.pending)
 
     def on_edited(self):
-        self.probe.set_target(*self.values())
+        self.probe.set_target(*self.target())
         self.show_result("")
         self.validate()
 
     def test(self):
-        self.probe.set_target(*self.values())
+        self.probe.set_target(*self.target())
         self.probe.get_device()
         self.show_result("Testing…")
         self.validate()
 
     def search(self):
-        self.probe.set_target(self.host_edit.text().strip(), self.port_spin.value())
+        self.probe.set_target(*self.target())
         self.probe.discover()
         self.show_result("Searching…")
         self.validate()
@@ -188,8 +188,11 @@ class ConfigDialog(QDialog):
         self.test_label.setStyleSheet("" if color is None else f"color: {color.name()}")
         self.adjustSize()
 
+    def target(self):
+        return self.host_edit.text().strip(), self.port_spin.value()
+
     def values(self):
-        return self.host_edit.text().strip(), self.port_spin.value(), self.cutoff_spin.value()
+        return *self.target(), self.cutoff_spin.value()
 
 
 def level_color(soc):

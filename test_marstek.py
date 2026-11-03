@@ -7,16 +7,19 @@ from datetime import datetime, timedelta
 from unittest import mock
 
 try:
-    from PyQt6.QtCore import QCoreApplication, QEventLoop, QTimer
+    from PyQt6.QtCore import QEventLoop, QTimer
     from PyQt6.QtNetwork import QHostAddress
+    from PyQt6.QtWidgets import QApplication
 except ImportError:
-    from PyQt5.QtCore import QCoreApplication, QEventLoop, QTimer
+    from PyQt5.QtCore import QEventLoop, QTimer
     from PyQt5.QtNetwork import QHostAddress
+    from PyQt5.QtWidgets import QApplication
 
 import marstek
 from marstek import MarstekClient, hours_remaining, smoothed_power, state_from_power
 
-app = QCoreApplication.instance() or QCoreApplication([])
+# A QApplication rather than a QCoreApplication: test_marstek_tray, run in the same process, creates widgets.
+app = QApplication.instance() or QApplication([])
 
 
 class FakeBattery(threading.Thread):
