@@ -6,6 +6,8 @@ from unittest import mock
 
 import marstek_tray
 
+app = marstek_tray.QApplication.instance() or marstek_tray.QApplication([])
+
 
 class GaugeFractionTest(unittest.TestCase):
     def test_empty_at_cutoff_and_full_at_100(self):
@@ -113,6 +115,14 @@ class ConfigTest(unittest.TestCase):
     def test_missing_file(self):
         with self.assertRaises(OSError):
             marstek_tray.load_config()
+
+
+class ConfigDialogTest(unittest.TestCase):
+    def test_typing_the_ip_retargets_the_probe(self):
+        dialog = marstek_tray.ConfigDialog("", 30001, 20)
+        dialog.host_edit.setText("192.168.1.10")
+        self.assertEqual((dialog.probe.host, dialog.probe.port), ("192.168.1.10", 30001))
+        self.assertTrue(dialog.ok_button.isEnabled())
 
 
 if __name__ == "__main__":
