@@ -1,0 +1,27 @@
+name: Commit emails
+
+on:
+  pull_request:
+
+jobs:
+  commit-emails:
+    # Only the owner's own PRs: outside contributors sign with whatever email they chose.
+    if: github.event.pull_request.user.login == github.repository_owner
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Pushed commits are public at once: only GitHub's anonymous addresses may appear in them.
+      - name: Check that commits use a noreply address
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          bad=$(git log --format='%h %an <%ae> / %cn <%ce>' "origin/$BASE_REF..$HEAD_SHA" \
+            | grep -vE '<[^>]*@users\.noreply\.github\.com> / [^<]*<([^>]*@users\.noreply\.github\.com|noreply@github\.com)>$' || true)
+          if [ -n "$bad" ]; then
+            echo "These commits expose a real email address:"
+            echo "$bad"
+            exit 1
+          fi
